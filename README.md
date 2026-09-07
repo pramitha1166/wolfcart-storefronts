@@ -13,6 +13,7 @@ and customized with its own theme, copy and catalog.
 | Folder | Domain | Description |
 |---|---|---|
 | [`possystem/`](./possystem) | [possystem.wolfcart.shop](https://possystem.wolfcart.shop) | POS terminals, barcode scanners, receipt printers, cash drawers, card readers and POS software. |
+| [`lablezza/`](./lablezza) | [lablezza.wolfcart.shop](https://lablezza.wolfcart.shop) | Luxury ready-to-wear, tailored menswear and womenswear, outerwear and couture accessories. |
 
 ## Adding a new storefront
 

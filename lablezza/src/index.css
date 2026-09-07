@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/*
+ * Theme tokens.
+ *
+ * These defaults keep the store readable before /config.js runs (and in local
+ * dev). At runtime `initTheme()` overwrites them on <html> with the merchant's
+ * chosen theme — every utility below reads through the variable, so a token
+ * swap restyles the whole storefront without touching the bundle.
+ *
+ * Fonts are loaded at runtime by loadThemeFonts(); the stacks here name a real
+ * fallback so text is never invisible while the face is fetching.
+ */
+:root {
+  --wc-bg: #FBF9F6;
+  --wc-surface: #FFFFFF;
+  --wc-border: #E8E1D6;
+  --wc-primary: #14110F;
+  --wc-primary-fg: #FBF9F6;
+  --wc-accent: #B08D57;
+  --wc-accent-fg: #14110F;
+  --wc-text: #3A352F;
+  --wc-muted: #8A8074;
+  --wc-heading: #14110F;
+
+  --wc-font-heading: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --wc-font-body: "Jost", ui-sans-serif, system-ui, sans-serif;
+  --wc-weight-heading: 600;
+  --wc-weight-body: 400;
+  --wc-size-base: 16px;
+  --wc-ls-heading: 0.01em;
+  --wc-lh-body: 1.7;
+
+  --wc-radius-sm: 0px;
+  --wc-radius-md: 0px;
+  --wc-radius-lg: 2px;
+  --wc-radius-btn: 0px;
+  --wc-radius-card: 0px;
+
+  --wc-container: 84rem;
+  --wc-section-gap: 96px;
+}
+
+@theme inline {
+  --color-bg: var(--wc-bg);
+  --color-surface: var(--wc-surface);
+  --color-line: var(--wc-border);
+  --color-primary: var(--wc-primary);
+  --color-primary-fg: var(--wc-primary-fg);
+  --color-accent: var(--wc-accent);
+  --color-accent-fg: var(--wc-accent-fg);
+  --color-body: var(--wc-text);
+  --color-muted: var(--wc-muted);
+  --color-heading: var(--wc-heading);
+
+  --font-sans: var(--wc-font-body);
+  --font-display: var(--wc-font-heading);
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --radius-sm: var(--wc-radius-sm);
+  --radius-md: var(--wc-radius-md);
+  --radius-lg: var(--wc-radius-lg);
+  --radius-btn: var(--wc-radius-btn);
+  --radius-card: var(--wc-radius-card);
+
+  --container-page: var(--wc-container);
+  --spacing-section: var(--wc-section-gap);
+}
+
+@layer base {
+  body {
+    background-color: var(--wc-bg);
+    color: var(--wc-text);
+    font-family: var(--wc-font-body);
+    font-size: var(--wc-size-base);
+    font-weight: var(--wc-weight-body);
+    line-height: var(--wc-lh-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--wc-heading);
+    font-family: var(--wc-font-heading);
+    font-weight: var(--wc-weight-heading);
+    letter-spacing: var(--wc-ls-heading);
+  }
+}
+
+/* Custom fade animations */
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
