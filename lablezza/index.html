@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Base title/meta — overridden at runtime by useSeo hook and by the CF Pages middleware for bots -->
+    <title>Lablezza — Luxury Clothing & Couture</title>
+    <meta name="description" content="Lablezza — an atelier of luxury ready-to-wear, tailored menswear and womenswear, and couture accessories, crafted from the finest fabrics and finished by hand." />
+
+    <!-- Open Graph defaults (replaced dynamically per page) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lablezza — Luxury Clothing & Couture" />
+    <meta property="og:description" content="Lablezza — an atelier of luxury ready-to-wear, tailored menswear and womenswear, and couture accessories, crafted from the finest fabrics and finished by hand." />
+
+    <!-- Twitter card defaults -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Lablezza — Luxury Clothing & Couture" />
+    <meta name="twitter:description" content="Lablezza — an atelier of luxury ready-to-wear, tailored menswear and womenswear, and couture accessories, crafted from the finest fabrics and finished by hand." />
+
+    <!-- Robots: allow indexing by default (overridden per-product via noIndex flag) -->
+    <meta name="robots" content="index, follow" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Injected per-merchant at deploy time; falls back to build-time env vars -->
+    <script src="/config.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
