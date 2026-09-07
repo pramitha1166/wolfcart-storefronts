@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WolfCart Storefront API — Documentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+ 
+  :root {
+    --bg: #09090F;
+    --s1: #0E0E1A;
+    --s2: #121220;
+    --s3: #181828;
+    --border: #1E1E30;
+    --border2: #262640;
+    --text: #E4E6F4;
+    --muted: #56587C;
+    --dim: #8082AA;
+    --green: #10B981; --gd: rgba(16,185,129,0.1); --gb: rgba(16,185,129,0.22);
+    --blue: #3B82F6;  --bd: rgba(59,130,246,0.1);  --bb: rgba(59,130,246,0.22);
+    --amber:#F59E0B; --ad: rgba(245,158,11,0.09); --ab: rgba(245,158,11,0.22);
+    --red:  #EF4444; --rd: rgba(239,68,68,0.09);  --rb: rgba(239,68,68,0.22);
+    --purple:#8B5CF6;--pd: rgba(139,92,246,0.1);  --pb: rgba(139,92,246,0.22);
+  }
+ 
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.65;display:flex;min-height:100vh}
+ 
+  /* SIDEBAR */
+  .sidebar{width:240px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;padding:24px 0}
+  .sidebar::-webkit-scrollbar{width:3px}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border2)}
+  .sb-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+  .sb-logo-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--text)}
+  .sb-logo-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .sb-section{padding:0 12px;margin-bottom:8px}
+  .sb-section-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:6px 8px 4px}
+  .sb-link{display:block;padding:6px 10px;border-radius:6px;font-size:12.5px;color:var(--dim);text-decoration:none;transition:all .15s;font-weight:300}
+  .sb-link:hover,.sb-link.active{background:var(--bd);color:#93C5FD}
+  .sb-method{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;padding:1px 5px;border-radius:3px;margin-right:5px}
+  .GET{background:var(--gd);color:var(--green);border:0.5px solid var(--gb)}
+  .POST{background:var(--bd);color:var(--blue);border:0.5px solid var(--bb)}
+  .PATCH{background:var(--ad);color:var(--amber);border:0.5px solid var(--ab)}
+  .DELETE{background:var(--rd);color:var(--red);border:0.5px solid var(--rb)}
+ 
+  /* MAIN */
+  .main{margin-left:240px;flex:1;max-width:900px;padding:48px 48px 120px}
+ 
+  /* HEADINGS */
+  h1{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px}
+  h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.02em;margin:56px 0 16px;padding-top:8px}
+  h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin:32px 0 12px}
+  h4{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--dim);letter-spacing:.05em;text-transform:uppercase;margin:20px 0 8px}
+  p{font-size:14px;color:var(--dim);margin-bottom:12px;font-weight:300;line-height:1.7}
+ 
+  /* ENDPOINT CARDS */
+  .endpoint{background:var(--s1);border:1px solid var(--border);border-radius:12px;margin-bottom:24px;overflow:hidden}
+  .ep-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--s2)}
+  .ep-method{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:4px 10px;border-radius:5px;flex-shrink:0}
+  .ep-path{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);flex:1}
+  .ep-desc{font-size:12px;color:var(--muted);margin-left:auto;font-weight:300}
+  .ep-body{padding:18px 20px}
+ 
+  /* AUTH BADGE */
+  .auth-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle}
+  .auth-key{background:var(--ad);color:var(--amber);border:0.5px solid var(--ab)}
+  .auth-open{background:var(--gd);color:var(--green);border:0.5px solid var(--gb)}
+ 
+  /* PARAMS TABLE */
+  .params-table{width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:13px}
+  .params-table th{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:6px 12px;text-align:left;border-bottom:1px solid var(--border)}
+  .params-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  .params-table tr:last-child td{border-bottom:none}
+  .p-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue)}
+  .p-type{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--purple);background:var(--pd);padding:1px 6px;border-radius:3px}
+  .p-req{font-size:10px;color:var(--red);background:var(--rd);padding:1px 6px;border-radius:3px;font-weight:500}
+  .p-opt{font-size:10px;color:var(--muted);background:var(--s3);padding:1px 6px;border-radius:3px}
+  .p-desc{font-size:12.5px;color:var(--dim);font-weight:300}
+ 
+  /* CODE BLOCKS */
+  .code-wrap{background:var(--s2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin:8px 0 16px}
+  .code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border);background:var(--s3)}
+  .code-lang{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+  .copy-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+  .copy-btn:hover{color:var(--text);border-color:var(--dim)}
+  .copy-btn.ok{color:var(--green);border-color:var(--gb)}
+  pre{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.72;color:#8082AA;padding:14px 16px;overflow-x:auto;white-space:pre}
+  .kw{color:#7dd3fc}
+  .str{color:#86efac}
+  .num{color:#fbbf24}
+  .cm{color:#4a5568}
+  .key{color:#c4b5fd}
+ 
+  /* RESPONSE SCHEMA */
+  .schema{background:var(--s3);border-radius:8px;padding:14px 16px;margin:8px 0 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:#8082AA}
+ 
+  /* INFO BOXES */
+  .info{border-radius:8px;padding:12px 16px;margin:12px 0;border-left:3px solid;font-size:13px;font-weight:300;line-height:1.6}
+  .info.tip{background:var(--bd);border-color:var(--blue);color:#93C5FD}
+  .info.warn{background:var(--ad);border-color:var(--amber);color:#FCD34D}
+  .info.note{background:var(--gd);border-color:var(--green);color:#6EE7B7}
+ 
+  /* DIVIDER */
+  hr{border:none;border-top:1px solid var(--border);margin:48px 0}
+  .tag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;vertical-align:middle;margin-left:4px}
+</style>
+</head>
+<body>
+ 
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-title">🐺 WolfCart</div>
+    <div class="sb-logo-sub">Storefront API v1</div>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Getting Started</div>
+    <a class="sb-link" href="#intro">Introduction</a>
+    <a class="sb-link" href="#auth">Authentication</a>
+    <a class="sb-link" href="#base-url">Base URL</a>
+    <a class="sb-link" href="#response">Response Format</a>
+    <a class="sb-link" href="#errors">Error Handling</a>
+    <a class="sb-link" href="#build-anywhere">Build Anywhere</a>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Store</div>
+    <a class="sb-link" href="#store-info"><span class="sb-method GET">GET</span>Store info</a>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Products</div>
+    <a class="sb-link" href="#products-list"><span class="sb-method GET">GET</span>List products</a>
+    <a class="sb-link" href="#products-get"><span class="sb-method GET">GET</span>Get product</a>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Collections</div>
+    <a class="sb-link" href="#collections-list"><span class="sb-method GET">GET</span>List collections</a>
+    <a class="sb-link" href="#collections-get"><span class="sb-method GET">GET</span>Get collection</a>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Cart</div>
+    <a class="sb-link" href="#cart-create"><span class="sb-method POST">POST</span>Create cart</a>
+    <a class="sb-link" href="#cart-get"><span class="sb-method GET">GET</span>Get cart</a>
+    <a class="sb-link" href="#cart-add"><span class="sb-method POST">POST</span>Add item</a>
+    <a class="sb-link" href="#cart-update"><span class="sb-method PATCH">PATCH</span>Update item</a>
+    <a class="sb-link" href="#cart-remove"><span class="sb-method DELETE">DELETE</span>Remove item</a>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Checkout</div>
+    <a class="sb-link" href="#checkout-config"><span class="sb-method GET">GET</span>Checkout config</a>
+    <a class="sb-link" href="#checkout-initiate"><span class="sb-method POST">POST</span>Initiate payment</a>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Orders</div>
+    <a class="sb-link" href="#orders-create"><span class="sb-method POST">POST</span>Place order</a>
+    <a class="sb-link" href="#orders-get"><span class="sb-method GET">GET</span>Get order</a>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Customers</div>
+    <a class="sb-link" href="#customer-register"><span class="sb-method POST">POST</span>Register</a>
+    <a class="sb-link" href="#customer-login"><span class="sb-method POST">POST</span>Login</a>
+    <a class="sb-link" href="#customer-me"><span class="sb-method GET">GET</span>My Profile</a>
+    <a class="sb-link" href="#customer-orders"><span class="sb-method GET">GET</span>My Orders</a>
+    <a class="sb-link" href="#customer-addresses"><span class="sb-method GET">GET</span>My Addresses</a>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Reviews</div>
+    <a class="sb-link" href="#reviews-list"><span class="sb-method GET">GET</span>List reviews</a>
+    <a class="sb-link" href="#reviews-create"><span class="sb-method POST">POST</span>Write review</a>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Shipping</div>
+    <a class="sb-link" href="#shipping-rates"><span class="sb-method POST">POST</span>Get rates</a>
+  </div>
+ 
+ 
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Types</div>
+    <a class="sb-link" href="#types">Type definitions</a>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">SEO</div>
+    <a class="sb-link" href="#seo-overview">Overview</a>
+    <a class="sb-link" href="#seo-product-fields">Product SEO fields</a>
+    <a class="sb-link" href="#seo-meta-tags">Applying meta tags</a>
+    <a class="sb-link" href="#seo-structured-data">Structured data (JSON-LD)</a>
+    <a class="sb-link" href="#seo-og-tags">Open Graph tags</a>
+    <a class="sb-link" href="#seo-sitemap">Sitemap</a>
+    <a class="sb-link" href="#seo-checklist">SEO checklist</a>
+  </div>
+</nav>
+ 
+<!-- MAIN CONTENT -->
+<main class="main">
+ 
+  <!-- ── INTRO ── -->
+  <div id="intro">
+    <p style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">WolfCart · Storefront API</p>
+    <h1>API Documentation</h1>
+    <p style="font-size:15px;color:var(--text);margin-bottom:24px">Everything you need to build a merchant storefront using WolfCart product, collection, cart and order data. Build in any framework — Next.js, Astro, plain HTML, Vue, SvelteKit — and upload via the admin panel.</p>
+ 
+    <div class="info tip">
+      <strong>Build anywhere.</strong> Your storefront can be built in any technology stack. As long as it calls these API endpoints to fetch data, it will work. Upload the built output as a .zip via the admin panel to go live.
+    </div>
+  </div>
+ 
+  <hr>
+ 
+  <!-- ── AUTH ── -->
+  <div id="auth">
+    <h2>Authentication</h2>
+    <p>All API requests require two headers: an API key for authentication and the tenant slug to identify which merchant's data to return.</p>
+ 
+    <h4>Required headers</h4>
+    <table class="params-table">
+      <thead><tr><th>Header</th><th>Value</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="p-name">Authorization</td>
+          <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#86efac">Bearer wc_live_xxxx...</code></td>
+          <td class="p-desc">API key from admin panel → Merchant → API Keys</td>
+        </tr>
+        <tr>
+          <td class="p-name">x-tenant-slug</td>
+          <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#86efac">kpopshop</code></td>
+          <td class="p-desc">The merchant's unique slug (e.g. kpopshop, myshop)</td>
+        </tr>
+        <tr>
+          <td class="p-name">Content-Type</td>
+          <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#86efac">application/json</code></td>
+          <td class="p-desc">Required for POST and PATCH requests</td>
+        </tr>
+      </tbody>
+    </table>
+ 
+    <h4>API key types</h4>
+    <table class="params-table">
+      <thead><tr><th>Prefix</th><th>Environment</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td class="p-name">wc_live_</td><td><span class="p-req">Live</span></td><td class="p-desc">Real transactions — use in production storefronts</td></tr>
+        <tr><td class="p-name">wc_test_</td><td><span class="p-opt">Test</span></td><td class="p-desc">Test transactions — use in development only, no real charges</td></tr>
+      </tbody>
+    </table>
+ 
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">fetch — JavaScript</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><span class="cm">// All API calls follow this pattern</span>
+<span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="str">`${API_BASE}/storefront/v1/products`</span>, {
+  headers: {
+    <span class="str">'Authorization'</span>: <span class="str">`Bearer ${API_KEY}`</span>,
+    <span class="str">'x-tenant-slug'</span>: <span class="str">'kpopshop'</span>,
+  }
+})</pre>
+    </div>
+ 
+    <div class="info warn">
+      <strong>Important:</strong> Store your API key in environment variables — never hardcode it in client-side JavaScript. For static storefronts, prefix with <code style="font-family:'JetBrains Mono',monospace">NEXT_PUBLIC_</code> (Next.js) or equivalent for your framework.
+    </div>
+  </div>
+ 
+  <!-- ── BASE URL ── -->
+  <div id="base-url">
+    <h2>Base URL</h2>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Base URL</span></div>
+      <pre><span class="cm"># Production</span>
+https://api.wolfcart.shop/storefront/v1
+ 
+<span class="cm"># Development (local)</span>
+http://localhost:3002/storefront/v1</pre>
+    </div>
+    <p>All endpoint paths below are relative to this base URL.</p>
+  </div>
+ 
+  <!-- ── RESPONSE FORMAT ── -->
+  <div id="response">
+    <h2>Response Format</h2>
+    <p>All successful responses follow a consistent envelope format.</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Success response</span></div>
+      <pre>{
+  <span class="key">"data"</span>: <span class="cm">/* the actual payload — array or object */</span>,
+  <span class="key">"meta"</span>: {
+    <span class="key">"total"</span>: <span class="num">124</span>,       <span class="cm">// total records (for lists)</span>
+    <span class="key">"page"</span>: <span class="num">1</span>,
+    <span class="key">"limit"</span>: <span class="num">24</span>,
+    <span class="key">"hasMore"</span>: <span class="kw">true</span>
+  }
+}</pre>
+    </div>
+ 
+    <div class="info note">When calling from JavaScript, always read <code style="font-family:'JetBrains Mono',monospace">response.data</code> — not the raw response. Use the pattern: <code style="font-family:'JetBrains Mono',monospace">const json = await res.json(); const items = json.data ?? json;</code></div>
+  </div>
+ 
+  <!-- ── ERRORS ── -->
+  <div id="errors">
+    <h2>Error Handling</h2>
+    <table class="params-table">
+      <thead><tr><th>Status</th><th>Code</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><span class="num" style="font-family:'JetBrains Mono',monospace">401</span></td><td class="p-name">unauthorized</td><td class="p-desc">Missing or invalid API key</td></tr>
+        <tr><td><span class="num" style="font-family:'JetBrains Mono',monospace">403</span></td><td class="p-name">forbidden</td><td class="p-desc">API key doesn't have required scope</td></tr>
+        <tr><td><span class="num" style="font-family:'JetBrains Mono',monospace">404</span></td><td class="p-name">not_found</td><td class="p-desc">Product, collection, cart, or order not found</td></tr>
+        <tr><td><span class="num" style="font-family:'JetBrains Mono',monospace">422</span></td><td class="p-name">validation_error</td><td class="p-desc">Invalid request body — check the errors array</td></tr>
+        <tr><td><span class="num" style="font-family:'JetBrains Mono',monospace">500</span></td><td class="p-name">server_error</td><td class="p-desc">WolfCart server error — retry with backoff</td></tr>
+      </tbody>
+    </table>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Error response</span></div>
+      <pre>{
+  <span class="key">"error"</span>: <span class="str">"not_found"</span>,
+  <span class="key">"message"</span>: <span class="str">"Product 'blue-ring' not found for tenant kpopshop"</span>,
+  <span class="key">"errors"</span>: []  <span class="cm">// validation errors array, usually empty</span>
+}</pre>
+    </div>
+  </div>
+ 
+  <!-- ── BUILD ANYWHERE ── -->
+  <div id="build-anywhere">
+    <h2>Build Anywhere — Upload via Admin</h2>
+    <p>Your storefront does not need to be built with any specific framework. You can use:</p>
+    <ul style="color:var(--dim);font-size:14px;font-weight:300;padding-left:20px;margin-bottom:16px;line-height:2">
+      <li>Next.js (static export) — recommended</li>
+      <li>Astro — excellent for static sites</li>
+      <li>Plain HTML + JavaScript — works perfectly</li>
+      <li>Vue, Nuxt, SvelteKit — any framework with static output</li>
+      <li>Any other static site generator</li>
+    </ul>
+    <p>Build your storefront, then zip the output folder and upload via:</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Upload process</span></div>
+      <pre><span class="cm"># Step 1: Build your storefront (any framework)</span>
+npx next build    <span class="cm"># Next.js</span>
+npm run build     <span class="cm"># Astro, Nuxt, SvelteKit etc.</span>
+ 
+<span class="cm"># Step 2: Zip the output</span>
+zip -r kpopshop-v1.zip ./out/     <span class="cm"># or ./dist/ depending on framework</span>
+ 
+<span class="cm"># Step 3: Upload via WolfCart admin panel</span>
+<span class="cm"># Go to: admin.wolfcart.shop/deployments/{tenantId}/upload</span>
+<span class="cm"># Drop the .zip → preview → Make it live</span>
+ 
+<span class="cm"># Result: kpopshop.wolfcart.shop serves your storefront from Cloudflare R2</span></pre>
+    </div>
+    <div class="info tip">
+      <strong>Requirements for the zip:</strong> Must contain <code style="font-family:'JetBrains Mono',monospace">index.html</code> at the root. All links and assets should use relative paths or absolute URLs. Images should be hosted externally (Cloudflare R2, Cloudinary, etc.) — not bundled in the zip.
+    </div>
+  </div>
+ 
+  <hr>
+ 
+  <!-- ══════════════════════════════════════ -->
+  <!-- STORE -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="store-endpoints" style="color:var(--green)">Store</h2>
+ 
+  <div class="endpoint" id="store-info">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/store</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Get store info and settings</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns the merchant's store name, description, logo, and settings. Use this to populate the storefront header and SEO metadata.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"name"</span>: <span class="str">"KPop Shop"</span>,
+    <span class="key">"slug"</span>: <span class="str">"kpopshop"</span>,
+    <span class="key">"description"</span>: <span class="str">"Authentic K-Pop merchandise delivered island-wide"</span>,
+    <span class="key">"logoUrl"</span>: <span class="str">"https://r2.wolfcart.shop/tenants/kpopshop/logo.png"</span>,
+    <span class="key">"currency"</span>: <span class="str">"LKR"</span>,
+    <span class="key">"currencySymbol"</span>: <span class="str">"Rs"</span>,
+    <span class="key">"plan"</span>: <span class="str">"growth"</span>,
+    <span class="key">"customDomain"</span>: <span class="str">"kpopshop.lk"</span>, <span class="cm">// null if not set</span>
+    <span class="key">"seo"</span>: {
+      <span class="key">"metaTitle"</span>:       <span class="str">"KPop Shop — Authentic K-Pop Merchandise Sri Lanka"</span>,
+      <span class="key">"metaDescription"</span>: <span class="str">"Shop authentic K-Pop albums, photocards and merch."</span>,
+      <span class="key">"ogImageUrl"</span>:      <span class="str">"https://r2.wolfcart.shop/tenants/kpopshop/og-default.jpg"</span>,
+      <span class="key">"twitterHandle"</span>:   <span class="str">"@kpopshoplk"</span>
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <hr>
+ 
+  <!-- ══════════════════════════════════════ -->
+  <!-- PRODUCTS -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="products-endpoints" style="color:var(--green)">Products</h2>
+ 
+  <div class="endpoint" id="products-list">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/products</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">List products with filtering, search &amp; sort</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns a paginated list of products for the merchant. Supports filtering by collection, searching by name, and sorting.</p>
+      <h4>Query parameters</h4>
+      <table class="params-table">
+        <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="p-name">limit</td><td><span class="p-type">integer</span></td><td><span class="p-opt">optional</span></td><td class="p-desc">Products per page. Default: 24. Max: 100.</td></tr>
+          <tr><td class="p-name">page</td><td><span class="p-type">integer</span></td><td><span class="p-opt">optional</span></td><td class="p-desc">Page number starting from 1. Default: 1.</td></tr>
+          <tr><td class="p-name">sort</td><td><span class="p-type">string</span></td><td><span class="p-opt">optional</span></td><td class="p-desc"><code style="font-family:'JetBrains Mono',monospace;font-size:11px">newest</code> | <code style="font-family:'JetBrains Mono',monospace;font-size:11px">price_asc</code> | <code style="font-family:'JetBrains Mono',monospace;font-size:11px">price_desc</code> | <code style="font-family:'JetBrains Mono',monospace;font-size:11px">name_asc</code> | <code style="font-family:'JetBrains Mono',monospace;font-size:11px">best_selling</code>. Default: newest.</td></tr>
+          <tr><td class="p-name">collection</td><td><span class="p-type">string</span></td><td><span class="p-opt">optional</span></td><td class="p-desc">Collection slug to filter by. e.g. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">womens-necklaces</code></td></tr>
+          <tr><td class="p-name">q</td><td><span class="p-type">string</span></td><td><span class="p-opt">optional</span></td><td class="p-desc">Search query — matches product name and description.</td></tr>
+          <tr><td class="p-name">inStock</td><td><span class="p-type">boolean</span></td><td><span class="p-opt">optional</span></td><td class="p-desc">Set to <code style="font-family:'JetBrains Mono',monospace;font-size:11px">true</code> to return only in-stock products.</td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Example request</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>GET /storefront/v1/products?limit=8&amp;sort=newest&amp;collection=womens-necklaces</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"prod_abc123"</span>,
+    <span class="key">"name"</span>: <span class="str">"Gold Chain Necklace"</span>,
+    <span class="key">"slug"</span>: <span class="str">"gold-chain-necklace"</span>,
+    <span class="key">"description"</span>: <span class="str">"18K gold plated chain necklace..."</span>,
+    <span class="key">"price"</span>: <span class="num">350000</span>,
+    <span class="key">"inStock"</span>: <span class="kw">true</span>,
+    
+    <span class="cm">// SEO Fields</span>
+    <span class="key">"metaTitle"</span>:       <span class="str">"Gold Chain Necklace — KPop Shop"</span>,
+    <span class="key">"metaDescription"</span>: <span class="str">"18K gold plated chain necklace. Perfect for everyday wear."</span>,
+    <span class="key">"metaKeywords"</span>:    <span class="str">"gold necklace, chain necklace, jewellery sri lanka"</span>,
+    <span class="key">"ogTitle"</span>:         <span class="str">"Gold Chain Necklace"</span>,
+    <span class="key">"ogDescription"</span>:   <span class="str">"Shop our most popular gold chain necklace."</span>,
+    <span class="key">"ogImageUrl"</span>:      <span class="str">"https://r2.wolfcart.shop/tenants/kpopshop/products/xxx/og.jpg"</span>,
+    <span class="key">"canonicalUrl"</span>:    <span class="str">"https://kpopshop.wolfcart.shop/products/gold-chain-necklace"</span>,
+    <span class="key">"noIndex"</span>:         <span class="kw">false</span>,
+
+    <span class="key">"images"</span>: [
+      { <span class="key">"url"</span>: <span class="str">"https://..."</span>, <span class="key">"alt"</span>: <span class="str">"Gold chain necklace front"</span> }
+    ],
+    <span class="key">"variants"</span>: [
+      {
+        <span class="key">"id"</span>: <span class="str">"var_xyz"</span>,
+        <span class="key">"title"</span>: <span class="str">"Gold / 40cm"</span>,
+        <span class="key">"price"</span>: <span class="num">350000</span>,
+        <span class="key">"inventory"</span>: <span class="num">12</span>
+      }
+    ],
+    <span class="key">"createdAt"</span>: <span class="str">"2025-04-20T10:30:00Z"</span>
+  }
+}</pre>
+      </div>
+      <div class="info note">
+        SEO fields are set per-product in the merchant dashboard.
+        If a field is null, fall back to the product name and description.
+        See the SEO section below for how to apply these fields in your storefront.
+      </div>
+      <div class="info note">Prices are always in <strong>cents (LKR)</strong>. Divide by 100 to get the display value. Rs 3,500 = 350000 cents.</div>
+    </div>
+  </div>
+ 
+  <div class="endpoint" id="products-get">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/products/:slug</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Get a single product by slug</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns the full product detail including all variants, all images, and full description. Use on the Product Detail Page (PDP).</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Example request</span></div>
+        <pre>GET /storefront/v1/products/gold-chain-necklace</pre>
+      </div>
+      <p>Response shape is the same as a single item from the list endpoint, with the addition of the full <code style="font-family:'JetBrains Mono',monospace;font-size:12px">description</code> field (HTML or plain text).</p>
+    </div>
+  </div>
+ 
+  <hr>
+ 
+  <!-- ══════════════════════════════════════ -->
+  <!-- COLLECTIONS -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="collections-endpoints" style="color:var(--green)">Collections</h2>
+ 
+  <div class="endpoint" id="collections-list">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/collections</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">List all collections</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns all collections for this merchant. Use to render the navigation menu, collection filter pills, and category grid on the homepage.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"col_abc"</span>,
+      <span class="key">"name"</span>: <span class="str">"Womens Necklaces"</span>,
+      <span class="key">"slug"</span>: <span class="str">"womens-necklaces"</span>,
+      <span class="key">"description"</span>: <span class="str">"Our full range of necklaces for women"</span>,
+      <span class="key">"imageUrl"</span>: <span class="str">"https://..."</span>,  <span class="cm">// null if no image</span>
+      <span class="key">"productCount"</span>: <span class="num">24</span>,
+      <span class="key">"sortOrder"</span>: <span class="num">1</span>
+    }
+  ]
+}</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="endpoint" id="collections-get">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/collections/:slug</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Get collection details and its products</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns the full collection object along with an array of active products assigned to it.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"col_abc"</span>,
+    <span class="key">"name"</span>: <span class="str">"Womens Necklaces"</span>,
+    <span class="key">"slug"</span>: <span class="str">"womens-necklaces"</span>,
+    <span class="key">"description"</span>: <span class="str">"Our full range of necklaces for women"</span>,
+    <span class="key">"imageUrl"</span>: <span class="str">"https://..."</span>
+  },
+  <span class="key">"products"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"prod_123"</span>,
+      <span class="key">"name"</span>: <span class="str">"Gold Chain Necklace"</span>,
+      <span class="key">"slug"</span>: <span class="str">"gold-chain-necklace"</span>,
+      <span class="key">"description"</span>: <span class="str">"..."</span>
+    }
+  ]
+}</pre>
+      </div>
+      <div class="info tip">
+        To get paginated products with full details (variants, inventory, etc.) for a specific collection, use: <br>
+        <code style="font-family:'JetBrains Mono',monospace;font-size:12px">GET /products?collection={slug}</code>
+      </div>
+    </div>
+  </div>
+ 
+  <hr>
+ 
+  <!-- ══════════════════════════════════════ -->
+  <!-- CART -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="cart-endpoints" style="color:var(--blue)">Cart</h2>
+  <p>The cart is server-side. Create a cart, store the cart ID in localStorage, and pass it with every cart operation. The cart ID persists across sessions.</p>
+ 
+  <div class="endpoint" id="cart-create">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/cart</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Create a new empty cart</span>
+    </div>
+    <div class="ep-body">
+      <p>Call this when a customer first visits the store (if no cart ID in localStorage). Store the returned <code style="font-family:'JetBrains Mono',monospace;font-size:12px">id</code> in localStorage as <code style="font-family:'JetBrains Mono',monospace;font-size:12px">wc_cart_id</code>.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"cart_abc123xyz"</span>,
+    <span class="key">"items"</span>: [],
+    <span class="key">"subtotal"</span>: <span class="num">0</span>,
+    <span class="key">"itemCount"</span>: <span class="num">0</span>,
+    <span class="key">"createdAt"</span>: <span class="str">"2025-04-27T10:00:00Z"</span>
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="endpoint" id="cart-get">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/cart/:cartId</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Get cart with all items</span>
+    </div>
+    <div class="ep-body">
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"cart_abc123xyz"</span>,
+    <span class="key">"items"</span>: [
+      {
+        <span class="key">"id"</span>: <span class="str">"item_001"</span>,
+        <span class="key">"variantId"</span>: <span class="str">"var_xyz"</span>,
+        <span class="key">"productId"</span>: <span class="str">"prod_abc123"</span>,
+        <span class="key">"productName"</span>: <span class="str">"Gold Chain Necklace"</span>,
+        <span class="key">"variantTitle"</span>: <span class="str">"Gold / 40cm"</span>,
+        <span class="key">"price"</span>: <span class="num">350000</span>,      <span class="cm">// cents</span>
+        <span class="key">"quantity"</span>: <span class="num">2</span>,
+        <span class="key">"lineTotal"</span>: <span class="num">700000</span>,   <span class="cm">// price × quantity, cents</span>
+        <span class="key">"imageUrl"</span>: <span class="str">"https://..."</span>,
+        <span class="key">"slug"</span>: <span class="str">"gold-chain-necklace"</span>
+      }
+    ],
+    <span class="key">"subtotal"</span>: <span class="num">700000</span>,   <span class="cm">// sum of all lineTotals, cents</span>
+    <span class="key">"itemCount"</span>: <span class="num">2</span>       <span class="cm">// total quantity across all items</span>
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="endpoint" id="cart-add">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/cart/:cartId/items</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Add item to cart</span>
+    </div>
+    <div class="ep-body">
+      <h4>Request body</h4>
+      <table class="params-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="p-name">variantId</td><td><span class="p-type">string</span></td><td><span class="p-req">required</span></td><td class="p-desc">The variant ID from the product. Use <code style="font-family:'JetBrains Mono',monospace;font-size:11px">product.variants[0].id</code> for the default variant.</td></tr>
+          <tr><td class="p-name">quantity</td><td><span class="p-type">integer</span></td><td><span class="p-opt">optional</span></td><td class="p-desc">Quantity to add. Default: 1. Max: variant inventory.</td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Request body</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{ <span class="key">"variantId"</span>: <span class="str">"var_xyz"</span>, <span class="key">"quantity"</span>: <span class="num">1</span> }</pre>
+      </div>
+      <p>If the item already exists in the cart, the quantity is incremented. Returns the updated cart object.</p>
+    </div>
+  </div>
+ 
+  <div class="endpoint" id="cart-update">
+    <div class="ep-header">
+      <span class="ep-method PATCH">PATCH</span>
+      <span class="ep-path">/cart/:cartId/items/:variantId</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Update item quantity</span>
+    </div>
+    <div class="ep-body">
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Request body</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{ <span class="key">"quantity"</span>: <span class="num">3</span> }</pre>
+      </div>
+      <div class="info note">Set quantity to <code style="font-family:'JetBrains Mono',monospace">0</code> to remove the item from the cart. Returns the updated cart.</div>
+    </div>
+  </div>
+ 
+  <div class="endpoint" id="cart-remove">
+    <div class="ep-header">
+      <span class="ep-method DELETE">DELETE</span>
+      <span class="ep-path">/cart/:cartId/items/:variantId</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Remove item from cart</span>
+    </div>
+    <div class="ep-body">
+      <p>Removes the item completely regardless of quantity. Returns the updated cart.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Example request</span></div>
+        <pre>DELETE /storefront/v1/cart/cart_abc123xyz/items/var_xyz</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <hr>
+ 
+  <!-- ══════════════════════════════════════ -->
+  <!-- CHECKOUT -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="checkout-endpoints" style="color:var(--blue)">Checkout</h2>
+  <p>Methods to handle the final checkout flow, including provider configuration and payment initiation.</p>
+ 
+  <div class="endpoint" id="checkout-config">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/checkout/config</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Get checkout configuration</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns all active payment methods and shipping options for this merchant's store. Call this when the checkout page loads to know which payment and shipping options to show the customer.</p>
+      
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Example response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"payment"</span>: [
+      {
+        <span class="key">"key"</span>: <span class="str">"payhere"</span>,
+        <span class="key">"name"</span>: <span class="str">"PayHere"</span>,
+        <span class="key">"description"</span>: <span class="str">"Pay with Visa, Mastercard, eZcash, FriMi, Genie and more"</span>,
+        <span class="key">"logoUrl"</span>: <span class="str">"https://r2.wolfcart.shop/providers/payhere-logo.png"</span>
+      },
+      {
+        <span class="key">"key"</span>: <span class="str">"cod"</span>,
+        <span class="key">"name"</span>: <span class="str">"Cash on Delivery"</span>,
+        <span class="key">"description"</span>: <span class="str">"Pay in cash when your order arrives"</span>,
+        <span class="key">"extraFeeCents"</span>: <span class="num">0</span>,
+        <span class="key">"instructions"</span>: <span class="kw">null</span>
+      },
+      {
+        <span class="key">"key"</span>: <span class="str">"bank_transfer"</span>,
+        <span class="key">"name"</span>: <span class="str">"Bank Transfer"</span>,
+        <span class="key">"description"</span>: <span class="str">"Transfer to our bank account"</span>,
+        <span class="key">"bankDetails"</span>: {
+          <span class="key">"bankName"</span>: <span class="str">"Sampath Bank"</span>,
+          <span class="key">"accountName"</span>: <span class="str">"WolfCart (Pvt) Ltd"</span>,
+          <span class="key">"branch"</span>: <span class="str">"Colombo 07"</span>
+        }
+      }
+    ],
+    <span class="key">"shipping"</span>: [
+      {
+        <span class="key">"id"</span>: <span class="str">"flat_rate"</span>,
+        <span class="key">"name"</span>: <span class="str">"Island-wide Delivery"</span>,
+        <span class="key">"description"</span>: <span class="str">"3-5 business days"</span>,
+        <span class="key">"amountCents"</span>: <span class="num">35000</span>,
+        <span class="key">"isFree"</span>: <span class="kw">false</span>
+      },
+      {
+        <span class="key">"id"</span>: <span class="str">"free_shipping"</span>,
+        <span class="key">"name"</span>: <span class="str">"Free Shipping"</span>,
+        <span class="key">"description"</span>: <span class="str">"Free on orders over Rs 5,000"</span>,
+        <span class="key">"amountCents"</span>: <span class="num">0</span>,
+        <span class="key">"isFree"</span>: <span class="kw">true</span>,
+        <span class="key">"minimumOrderCents"</span>: <span class="num">500000</span>
+      }
+    ]
+  }
+}</pre>
+      </div>
+      
+      <div class="info note">
+        Call this endpoint when the checkout page loads. Use the <code style="font-family:'JetBrains Mono',monospace">payment[].key</code> values to show payment method options. Use the <code style="font-family:'JetBrains Mono',monospace">shipping[].id</code> values when calling <code style="font-family:'JetBrains Mono',monospace">POST /checkout/initiate</code>.
+      </div>
+    </div>
+  </div>
+ 
+  <div class="endpoint" id="checkout-initiate">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/checkout/initiate</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Initiate payment for an order</span>
+    </div>
+    <div class="ep-body">
+      <p>Initiates payment after the customer selects a payment method. Call this after <code style="font-family:'JetBrains Mono',monospace">POST /orders</code> returns an <code style="font-family:'JetBrains Mono',monospace">orderId</code>. The response tells you what to do next — redirect to PayHere, confirm COD, or show bank details.</p>
+      
+      <h4>Request body</h4>
+      <table class="params-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="p-name">orderId</td><td><span class="p-type">string</span></td><td><span class="p-req">required</span></td><td class="p-desc">Order ID returned by <code style="font-family:'JetBrains Mono',monospace">POST /orders</code></td></tr>
+          <tr><td class="p-name">paymentMethod</td><td><span class="p-type">string</span></td><td><span class="p-req">required</span></td><td class="p-desc"><code style="font-family:'JetBrains Mono',monospace">'payhere'</code> | <code style="font-family:'JetBrains Mono',monospace">'directpay'</code> | <code style="font-family:'JetBrains Mono',monospace">'cod'</code> | <code style="font-family:'JetBrains Mono',monospace">'bank_transfer'</code></td></tr>
+        </tbody>
+      </table>
+
+      <h4>Responses — 3 variants depending on paymentMethod</h4>
+      
+      <p><strong>Variant 1 — payhere</strong>:</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response — PayHere</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"method"</span>: <span class="str">"payhere"</span>,
+    <span class="key">"payhereUrl"</span>: <span class="str">"https://www.payhere.lk/pay/checkout"</span>,
+    <span class="key">"params"</span>: {
+      <span class="key">"merchant_id"</span>: <span class="str">"..."</span>,
+      <span class="key">"return_url"</span>: <span class="str">"https://kpopshop.wolfcart.shop/order-success?id=..."</span>,
+      <span class="key">"cancel_url"</span>: <span class="str">"https://kpopshop.wolfcart.shop/checkout"</span>,
+      <span class="key">"notify_url"</span>: <span class="str">"https://api.wolfcart.shop/storefront/v1/payment/webhook"</span>,
+      <span class="key">"order_id"</span>: <span class="str">"ord_xxx"</span>,
+      <span class="key">"items"</span>: <span class="str">"Order #1042 — KPop Shop"</span>,
+      <span class="key">"amount"</span>: <span class="str">"3500.00"</span>,
+      <span class="key">"currency"</span>: <span class="str">"LKR"</span>,
+      <span class="key">"hash"</span>: <span class="str">"ABC123..."</span>,
+      <span class="key">"first_name"</span>: <span class="str">"Saman"</span>,
+      <span class="key">"last_name"</span>: <span class="str">"Perera"</span>,
+      <span class="key">"email"</span>: <span class="str">"saman@gmail.com"</span>,
+      <span class="key">"phone"</span>: <span class="str">"+94771234567"</span>,
+      <span class="key">"address"</span>: <span class="str">"No 10, Galle Road"</span>,
+      <span class="key">"city"</span>: <span class="str">"Colombo"</span>,
+      <span class="key">"country"</span>: <span class="str">"Sri Lanka"</span>,
+      <span class="key">"custom_1"</span>: <span class="str">"tenant-uuid"</span>
+    }
+  }
+}</pre>
+      </div>
+      <p class="p-desc"><strong>Action:</strong> Build a hidden HTML form, set <code style="font-family:'JetBrains Mono',monospace">action=payhereUrl</code>, add all params as hidden inputs, and submit the form. The browser will redirect to PayHere.</p>
+
+      <p><strong>Variant 2 — directpay</strong> (Identical pattern to PayHere):</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response — DirectPay</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"method"</span>: <span class="str">"directpay"</span>,
+    <span class="key">"formUrl"</span>: <span class="str">"https://portal.directpay.lk/"</span>,
+    <span class="key">"params"</span>: {
+      <span class="key">"_type"</span>: <span class="str">"ONE_TIME"</span>,
+      <span class="key">"_mId"</span>: <span class="str">"..."</span>,
+      <span class="key">"_amount"</span>: <span class="str">"3500.00"</span>,
+      <span class="key">"_currency"</span>: <span class="str">"LKR"</span>,
+      <span class="key">"_orderId"</span>: <span class="str">"ord_xxx"</span>,
+      <span class="key">"_reference"</span>: <span class="str">"ord_xxx"</span>,
+      <span class="key">"_description"</span>: <span class="str">"Order #1042"</span>,
+      <span class="key">"_returnUrl"</span>: <span class="str">"https://..."</span>,
+      <span class="key">"_cancelUrl"</span>: <span class="str">"https://..."</span>,
+      <span class="key">"_responseUrl"</span>: <span class="str">"https://api.wolfcart.shop/storefront/v1/payment/directpay-webhook"</span>,
+      <span class="key">"signature"</span>: <span class="str">"..."</span>
+    }
+  }
+}</pre>
+      </div>
+      <p class="p-desc"><strong>Action:</strong> Build a hidden HTML form, set <code style="font-family:'JetBrains Mono',monospace">action=formUrl</code>, add all params as hidden inputs, and submit the form.</p>
+
+      <p><strong>Variant 3 — cod</strong>:</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response — COD</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"method"</span>: <span class="str">"cod"</span>,
+    <span class="key">"orderId"</span>: <span class="str">"ord_xxx"</span>
+  }
+}</pre>
+      </div>
+      <p class="p-desc"><strong>Action:</strong> No redirect. Clear cart, go to <code style="font-family:'JetBrains Mono',monospace">/order-success</code>.</p>
+
+      <p><strong>Variant 4 — bank_transfer</strong>:</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response — Bank Transfer</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"method"</span>: <span class="str">"bank_transfer"</span>,
+    <span class="key">"orderId"</span>: <span class="str">"ord_xxx"</span>,
+    <span class="key">"bankDetails"</span>: {
+      <span class="key">"bankName"</span>: <span class="str">"Sampath Bank"</span>,
+      <span class="key">"accountName"</span>: <span class="str">"WolfCart (Pvt) Ltd"</span>,
+      <span class="key">"branch"</span>: <span class="str">"Colombo 07"</span>
+    },
+    <span class="key">"instructions"</span>: <span class="str">"Transfer exact order amount. Use order number as reference."</span>
+  }
+}</pre>
+      </div>
+      <p class="p-desc"><strong>Action:</strong> No redirect. Clear cart, go to <code style="font-family:'JetBrains Mono',monospace">/order-success</code> and show bank transfer instructions.</p>
+
+      <h4>Complete code example</h4>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">JavaScript — Implementation Pattern</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre><span class="cm">// Step 1: Create order</span>
+<span class="kw">const</span> { data: order } = <span class="kw">await</span> wolfcartFetch(<span class="str">'/orders'</span>, {
+  method: <span class="str">'POST'</span>,
+  body: { cartId, email, shippingAddress, shippingMethodId }
+})
+
+<span class="cm">// Step 2: Initiate payment</span>
+<span class="kw">const</span> { data: pay } = <span class="kw">await</span> wolfcartFetch(<span class="str">'/checkout/initiate'</span>, {
+  method: <span class="str">'POST'</span>,
+  body: { orderId: order.id, paymentMethod: <span class="str">'payhere'</span> }
+})
+
+<span class="cm">// Step 3: Handle response</span>
+<span class="kw">switch</span> (pay.method) {
+  <span class="kw">case</span> <span class="str">'payhere'</span>:
+  <span class="kw">case</span> <span class="str">'directpay'</span>:
+    <span class="cm">// Both use identical form submission pattern</span>
+    <span class="kw">const</span> url = pay.payhereUrl || pay.formUrl
+    <span class="kw">const</span> form = document.createElement(<span class="str">'form'</span>)
+    form.method = <span class="str">'POST'</span>
+    form.action = url
+    Object.entries(pay.params).forEach(([k, v]) => {
+      <span class="kw">const</span> el = document.createElement(<span class="str">'input'</span>)
+      el.type = <span class="str">'hidden'</span>; el.name = k; el.value = String(v)
+      form.appendChild(el)
+    })
+    document.body.appendChild(form)
+    form.submit()
+    <span class="kw">break</span>
+  <span class="kw">case</span> <span class="str">'cod'</span>:
+    router.push(<span class="str">`/order-success?id=${order.id}&amp;method=cod`</span>)
+    <span class="kw">break</span>
+  <span class="kw">case</span> <span class="str">'bank_transfer'</span>:
+    router.push(<span class="str">`/order-success?id=${order.id}&amp;method=bank_transfer`</span>)
+    <span class="kw">break</span>
+}</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <hr>
+ 
+  <!-- ══════════════════════════════════════ -->
+  <!-- ORDERS -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="orders-endpoints" style="color:var(--purple)">Orders</h2>
+ 
+  <div class="endpoint" id="orders-create">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/orders</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Place an order from a cart</span>
+    </div>
+    <div class="ep-body">
+      <p>Creates an order from the cart. Call this after payment is confirmed. The cart is cleared after a successful order.</p>
+      <h4>Request body</h4>
+      <table class="params-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="p-name">cartId</td><td><span class="p-type">string</span></td><td><span class="p-req">required</span></td><td class="p-desc">The cart ID to convert to an order.</td></tr>
+          <tr><td class="p-name">email</td><td><span class="p-type">string</span></td><td><span class="p-req">required</span></td><td class="p-desc">Customer email address for order confirmation.</td></tr>
+          <tr><td class="p-name">shippingAddress</td><td><span class="p-type">object</span></td><td><span class="p-req">required</span></td><td class="p-desc">Customer shipping address (see schema below).</td></tr>
+          <tr><td class="p-name">shippingMethodId</td><td><span class="p-type">string</span></td><td><span class="p-req">required</span></td><td class="p-desc">ID from /shipping/rates response. e.g. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">standard</code></td></tr>
+          <tr><td class="p-name">paymentReference</td><td><span class="p-type">string</span></td><td><span class="p-opt">optional</span></td><td class="p-desc">Payment gateway reference (e.g. PayHere order ID) for reconciliation.</td></tr>
+          <tr><td class="p-name">note</td><td><span class="p-type">string</span></td><td><span class="p-opt">optional</span></td><td class="p-desc">Customer note for the order.</td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Request body</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"cartId"</span>: <span class="str">"cart_abc123xyz"</span>,
+  <span class="key">"email"</span>: <span class="str">"customer@gmail.com"</span>,
+  <span class="key">"shippingAddress"</span>: {
+    <span class="key">"firstName"</span>: <span class="str">"Saman"</span>,
+    <span class="key">"lastName"</span>: <span class="str">"Perera"</span>,
+    <span class="key">"address1"</span>: <span class="str">"No 10, Galle Road"</span>,
+    <span class="key">"address2"</span>: <span class="str">"Apt 3B"</span>,      <span class="cm">// optional</span>
+    <span class="key">"city"</span>: <span class="str">"Colombo"</span>,
+    <span class="key">"province"</span>: <span class="str">"Western"</span>,   <span class="cm">// optional</span>
+    <span class="key">"postalCode"</span>: <span class="str">"00300"</span>,
+    <span class="key">"country"</span>: <span class="str">"LK"</span>,           <span class="cm">// ISO 3166-1 alpha-2</span>
+    <span class="key">"phone"</span>: <span class="str">"+94771234567"</span>
+  },
+  <span class="key">"shippingMethodId"</span>: <span class="str">"standard"</span>,
+  <span class="key">"paymentReference"</span>: <span class="str">"PH_ORDER_12345"</span>
+}</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"ord_xyz789"</span>,
+    <span class="key">"orderNumber"</span>: <span class="str">"#1042"</span>,
+    <span class="key">"status"</span>: <span class="str">"pending"</span>,    <span class="cm">// pending → paid → fulfilled → delivered</span>
+    <span class="key">"total"</span>: <span class="num">750000</span>,        <span class="cm">// subtotal + shipping, cents</span>
+    <span class="key">"subtotal"</span>: <span class="num">700000</span>,
+    <span class="key">"shippingCost"</span>: <span class="num">50000</span>,
+    <span class="key">"items"</span>: [ <span class="cm">/* same as cart items */</span> ],
+    <span class="key">"shippingAddress"</span>: { <span class="cm">/* same as request */</span> },
+    <span class="key">"createdAt"</span>: <span class="str">"2025-04-27T11:00:00Z"</span>
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="endpoint" id="orders-get">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/orders/:orderId</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Get order by ID</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns the full order details. Use on the order confirmation page after checkout completes.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Example request</span></div>
+        <pre>GET /storefront/v1/orders/ord_xyz789</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <hr>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- CUSTOMERS -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="customers-endpoints" style="color:var(--blue)">Customers</h2>
+  <p>Use these endpoints to manage customer accounts, authentication, and order history.</p>
+
+  <div class="endpoint" id="customer-register">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/customers/register</span>
+      <span class="auth-badge auth-open">Public</span>
+      <span class="ep-desc">Register a new customer account</span>
+    </div>
+    <div class="ep-body">
+      <table class="params-table">
+        <thead><tr><th>Property</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="p-name">email</td><td><span class="p-type">string</span></td><td><span class="p-req">Req</span></td><td class="p-desc">Valid email address</td></tr>
+          <tr><td class="p-name">password</td><td><span class="p-type">string</span></td><td><span class="p-req">Req</span></td><td class="p-desc">Min 6 characters</td></tr>
+          <tr><td class="p-name">firstName</td><td><span class="p-type">string</span></td><td><span class="p-opt">Opt</span></td><td class="p-desc">Customer's first name</td></tr>
+          <tr><td class="p-name">lastName</td><td><span class="p-type">string</span></td><td><span class="p-opt">Opt</span></td><td class="p-desc">Customer's last name</td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span></div>
+        <pre>{
+  <span class="key">"token"</span>: <span class="str">"eyJhbGciOi..."</span>,
+  <span class="key">"customer"</span>: { <span class="key">"id"</span>: <span class="str">"cust_123"</span>, <span class="key">"email"</span>: <span class="str">"john@example.com"</span> }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="endpoint" id="customer-login">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/customers/login</span>
+      <span class="auth-badge auth-open">Public</span>
+      <span class="ep-desc">Authenticate and get a session token</span>
+    </div>
+    <div class="ep-body">
+      <pre>{ <span class="key">"email"</span>: <span class="str">"..."</span>, <span class="key">"password"</span>: <span class="str">"..."</span> }</pre>
+    </div>
+  </div>
+
+  <div class="endpoint" id="customer-me">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/customers/me</span>
+      <span class="auth-badge auth-key">JWT Token</span>
+      <span class="ep-desc">Get current customer profile</span>
+    </div>
+    <div class="ep-body">
+      <p>Requires <code style="font-family:'JetBrains Mono',monospace">Authorization: Bearer &lt;token&gt;</code> header using the token from login/register.</p>
+    </div>
+  </div>
+
+  <div class="endpoint" id="customer-orders">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/customers/me/orders</span>
+      <span class="auth-badge auth-key">JWT Token</span>
+      <span class="ep-desc">Get customer's order history</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns a paginated list of orders placed by this customer.</p>
+    </div>
+  </div>
+
+  <div class="endpoint" id="customer-addresses">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/customers/me/addresses</span>
+      <span class="auth-badge auth-key">JWT Token</span>
+      <span class="ep-desc">List customer's saved addresses</span>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- REVIEWS -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="reviews-endpoints" style="color:var(--amber)">Product Reviews</h2>
+  <p>Display and collect customer feedback for products.</p>
+
+  <div class="endpoint" id="reviews-list">
+    <div class="ep-header">
+      <span class="ep-method GET">GET</span>
+      <span class="ep-path">/products/:slug/reviews</span>
+      <span class="auth-badge auth-open">Public</span>
+      <span class="ep-desc">Get approved reviews for a product</span>
+    </div>
+    <div class="ep-body">
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span></div>
+        <pre>{
+  <span class="key">"data"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"rev_123"</span>,
+      <span class="key">"rating"</span>: <span class="num">5</span>,
+      <span class="key">"reviewerName"</span>: <span class="str">"John D."</span>,
+      <span class="key">"body"</span>: <span class="str">"Great quality!"</span>,
+      <span class="key">"isVerifiedPurchase"</span>: <span class="kw">true</span>,
+      <span class="key">"createdAt"</span>: <span class="str">"2025-04-29T..."</span>
+    }
+  ],
+  <span class="key">"meta"</span>: { <span class="key">"averageRating"</span>: <span class="str">"4.80"</span>, <span class="key">"total"</span>: <span class="num">15</span> }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="endpoint" id="reviews-create">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/products/:slug/reviews</span>
+      <span class="auth-badge auth-open">Public</span>
+      <span class="ep-desc">Submit a new review</span>
+    </div>
+    <div class="ep-body">
+      <table class="params-table">
+        <thead><tr><th>Property</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="p-name">rating</td><td><span class="p-type">number</span></td><td><span class="p-req">Req</span></td><td class="p-desc">1 to 5 stars</td></tr>
+          <tr><td class="p-name">reviewerName</td><td><span class="p-type">string</span></td><td><span class="p-req">Req</span></td><td class="p-desc">Display name</td></tr>
+          <tr><td class="p-name">reviewerEmail</td><td><span class="p-type">string</span></td><td><span class="p-req">Req</span></td><td class="p-desc">Private email for verification</td></tr>
+          <tr><td class="p-name">title</td><td><span class="p-type">string</span></td><td><span class="p-opt">Opt</span></td><td class="p-desc">Review headline</td></tr>
+          <tr><td class="p-name">body</td><td><span class="p-type">string</span></td><td><span class="p-opt">Opt</span></td><td class="p-desc">Review content</td></tr>
+          <tr><td class="p-name">orderId</td><td><span class="p-type">string</span></td><td><span class="p-opt">Opt</span></td><td class="p-desc">Matches order for "Verified" badge</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="endpoint" id="reviews-helpful">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/reviews/:id/helpful</span>
+      <span class="auth-badge auth-open">Public</span>
+      <span class="ep-desc">Mark a review as helpful</span>
+    </div>
+    <div class="ep-body">
+      <p>Increments the helpful count for a review. Rate-limited by IP to prevent multiple votes from the same user.</p>
+    </div>
+  </div>
+
+  <hr>
+ 
+  <!-- ══════════════════════════════════════ -->
+  <!-- SHIPPING -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="shipping-endpoints" style="color:var(--amber)">Shipping</h2>
+ 
+  <div class="endpoint" id="shipping-rates">
+    <div class="ep-header">
+      <span class="ep-method POST">POST</span>
+      <span class="ep-path">/shipping/rates</span>
+      <span class="auth-badge auth-key">API key</span>
+      <span class="ep-desc">Get available shipping rates</span>
+    </div>
+    <div class="ep-body">
+      <p>Returns available shipping methods for the given address and cart. Call this on the shipping step of checkout.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Request body</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"cartId"</span>: <span class="str">"cart_abc123xyz"</span>,
+  <span class="key">"address"</span>: {
+    <span class="key">"country"</span>: <span class="str">"LK"</span>,
+    <span class="key">"city"</span>: <span class="str">"Colombo"</span>,
+    <span class="key">"postalCode"</span>: <span class="str">"00300"</span>
+  }
+}</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">Response</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+        <pre>{
+  <span class="key">"data"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"standard"</span>,
+      <span class="key">"name"</span>: <span class="str">"Standard Delivery"</span>,
+      <span class="key">"description"</span>: <span class="str">"3–5 business days island-wide"</span>,
+      <span class="key">"price"</span>: <span class="num">0</span>,          <span class="cm">// 0 = free shipping</span>
+      <span class="key">"estimatedDays"</span>: <span class="str">"3-5"</span>,
+      <span class="key">"isFree"</span>: <span class="kw">true</span>
+    },
+    {
+      <span class="key">"id"</span>: <span class="str">"express"</span>,
+      <span class="key">"name"</span>: <span class="str">"Express Delivery"</span>,
+      <span class="key">"description"</span>: <span class="str">"1–2 business days"</span>,
+      <span class="key">"price"</span>: <span class="num">50000</span>,     <span class="cm">// Rs 500.00</span>
+      <span class="key">"estimatedDays"</span>: <span class="str">"1-2"</span>,
+      <span class="key">"isFree"</span>: <span class="kw">false</span>
+    }
+  ]
+}</pre>
+      </div>
+    </div>
+  </div>
+ 
+  <hr>
+ 
+  <!-- ══════════════════════════════════════ -->
+  <!-- TYPES -->
+  <!-- ══════════════════════════════════════ -->
+  <div id="types">
+    <h2>TypeScript Type Definitions</h2>
+    <p>Copy these types into your storefront project for full type safety.</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">types/wolfcart.ts</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><span class="cm">// ── Core types ────────────────────────────────────────────</span>
+ 
+<span class="kw">export type</span> Store = {
+  name: <span class="kw">string</span>
+  slug: <span class="kw">string</span>
+  description: <span class="kw">string</span>
+  logoUrl: <span class="kw">string</span> | <span class="kw">null</span>
+  currency: <span class="kw">string</span>           <span class="cm">// 'LKR'</span>
+  currencySymbol: <span class="kw">string</span>    <span class="cm">// 'Rs'</span>
+  plan: <span class="kw">string</span>
+  customDomain: <span class="kw">string</span> | <span class="kw">null</span>
+}
+ 
+<span class="kw">export type</span> ProductImage = {
+  url: <span class="kw">string</span>
+  alt: <span class="kw">string</span>
+}
+ 
+<span class="kw">export type</span> ProductVariant = {
+  id: <span class="kw">string</span>
+  title: <span class="kw">string</span>
+  price: <span class="kw">number</span>              <span class="cm">// cents</span>
+  compareAtPrice: <span class="kw">number</span> | <span class="kw">null</span>
+  inventory: <span class="kw">number</span>
+  options: Record&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;  <span class="cm">// { 'Color': 'Gold', 'Size': 'M' }</span>
+}
+ 
+<span class="kw">export type</span> Product = {
+  id: <span class="kw">string</span>
+  name: <span class="kw">string</span>
+  slug: <span class="kw">string</span>
+  description: <span class="kw">string</span>
+  price: <span class="kw">number</span>              <span class="cm">// cents — lowest variant price</span>
+  compareAtPrice: <span class="kw">number</span> | <span class="kw">null</span>
+  images: ProductImage[]
+  variants: ProductVariant[]
+  collections: <span class="kw">string</span>[]       <span class="cm">// collection slugs</span>
+  inStock: <span class="kw">boolean</span>
+  totalInventory: <span class="kw">number</span>
+  createdAt: <span class="kw">string</span>
+
+  <span class="cm">// SEO fields (Growth + Pro plans — null on Starter)</span>
+  metaTitle:        <span class="kw">string</span> | <span class="kw">null</span>
+  metaDescription:  <span class="kw">string</span> | <span class="kw">null</span>
+  metaKeywords:     <span class="kw">string</span> | <span class="kw">null</span>
+  ogTitle:          <span class="kw">string</span> | <span class="kw">null</span>
+  ogDescription:    <span class="kw">string</span> | <span class="kw">null</span>
+  ogImageUrl:       <span class="kw">string</span> | <span class="kw">null</span>
+  canonicalUrl:     <span class="kw">string</span> | <span class="kw">null</span>
+  noIndex:          <span class="kw">boolean</span>
+}
+
+<span class="cm">// Helper: resolved SEO values with fallbacks applied</span>
+<span class="kw">export type</span> SeoMeta = {
+  title:          <span class="kw">string</span>
+  description:    <span class="kw">string</span>
+  ogTitle:        <span class="kw">string</span>
+  ogDescription:  <span class="kw">string</span>
+  ogImage:        <span class="kw">string</span> | <span class="kw">null</span>
+  canonical:      <span class="kw">string</span>
+  noIndex:        <span class="kw">boolean</span>
+  keywords:       <span class="kw">string</span> | <span class="kw">null</span>
+}
+
+<span class="cm">// Helper function to resolve SEO with fallbacks</span>
+<span class="kw">export function</span> resolveProductSeo(
+  product: Product,
+  storeUrl: <span class="kw">string</span>,
+  storeName: <span class="kw">string</span>
+): SeoMeta {
+  <span class="kw">return</span> {
+    title:         product.metaTitle ?? <span class="str">`${product.name} — ${storeName}`</span>,
+    description:   product.metaDescription ?? product.description?.slice(<span class="num">0</span>, <span class="num">155</span>) ?? <span class="str">''</span>,
+    ogTitle:       product.ogTitle ?? product.metaTitle ?? product.name,
+    ogDescription: product.ogDescription ?? product.metaDescription ?? <span class="str">''</span>,
+    ogImage:       product.ogImageUrl ?? product.images?.[<span class="num">0</span>]?.url ?? <span class="kw">null</span>,
+    canonical:     product.canonicalUrl ?? <span class="str">`${storeUrl}/products/${product.slug}`</span>,
+    noIndex:       product.noIndex ?? <span class="kw">false</span>,
+    keywords:      product.metaKeywords ?? <span class="kw">null</span>,
+  }
+}
+ 
+<span class="kw">export type</span> Collection = {
+  id: <span class="kw">string</span>
+  name: <span class="kw">string</span>
+  slug: <span class="kw">string</span>
+  description: <span class="kw">string</span>
+  imageUrl: <span class="kw">string</span> | <span class="kw">null</span>
+  productCount: <span class="kw">number</span>
+  sortOrder: <span class="kw">number</span>
+}
+ 
+<span class="kw">export type</span> CartItem = {
+  id: <span class="kw">string</span>
+  variantId: <span class="kw">string</span>
+  productId: <span class="kw">string</span>
+  productName: <span class="kw">string</span>
+  variantTitle: <span class="kw">string</span>
+  price: <span class="kw">number</span>              <span class="cm">// cents</span>
+  quantity: <span class="kw">number</span>
+  lineTotal: <span class="kw">number</span>          <span class="cm">// cents</span>
+  imageUrl: <span class="kw">string</span>
+  slug: <span class="kw">string</span>
+}
+ 
+<span class="kw">export type</span> Cart = {
+  id: <span class="kw">string</span>
+  items: CartItem[]
+  subtotal: <span class="kw">number</span>           <span class="cm">// cents</span>
+  itemCount: <span class="kw">number</span>
+  createdAt: <span class="kw">string</span>
+}
+ 
+<span class="kw">export type</span> ShippingAddress = {
+  firstName: <span class="kw">string</span>
+  lastName: <span class="kw">string</span>
+  address1: <span class="kw">string</span>
+  address2?: <span class="kw">string</span>
+  city: <span class="kw">string</span>
+  province?: <span class="kw">string</span>
+  postalCode: <span class="kw">string</span>
+  country: <span class="kw">string</span>            <span class="cm">// ISO 3166-1 alpha-2, e.g. 'LK'</span>
+  phone: <span class="kw">string</span>
+}
+ 
+<span class="kw">export type</span> ShippingRate = {
+  id: <span class="kw">string</span>
+  name: <span class="kw">string</span>
+  description: <span class="kw">string</span>
+  price: <span class="kw">number</span>              <span class="cm">// cents. 0 = free</span>
+  estimatedDays: <span class="kw">string</span>
+  isFree: <span class="kw">boolean</span>
+}
+ 
+<span class="kw">export type</span> Order = {
+  id: <span class="kw">string</span>
+  orderNumber: <span class="kw">string</span>
+  status: <span class="str">'pending'</span> | <span class="str">'paid'</span> | <span class="str">'fulfilled'</span> | <span class="str">'delivered'</span> | <span class="str">'cancelled'</span>
+  total: <span class="kw">number</span>              <span class="cm">// cents</span>
+  subtotal: <span class="kw">number</span>
+  shippingCost: <span class="kw">number</span>
+  items: CartItem[]
+  shippingAddress: ShippingAddress
+  createdAt: <span class="kw">string</span>
+}
+ 
+<span class="cm">// ── API response wrapper ──────────────────────────────────</span>
+<span class="kw">export type</span> ApiResponse&lt;T&gt; = {
+  data: T
+  meta?: {
+    total: <span class="kw">number</span>
+    page: <span class="kw">number</span>
+    limit: <span class="kw">number</span>
+    hasMore: <span class="kw">boolean</span>
+  }
+}
+ 
+<span class="cm">// ── Helper: format LKR price from cents ──────────────────</span>
+<span class="kw">export function</span> formatLKR(cents: <span class="kw">number</span>): <span class="kw">string</span> {
+  <span class="kw">return</span> <span class="str">`Rs ${(cents / 100).toLocaleString('en-LK', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`</span>
+}</pre>
+    </div>
+  </div>
+ 
+  <hr>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SEO -->
+  <!-- ══════════════════════════════════════ -->
+  <h2 id="seo-overview" style="color:var(--blue)">SEO</h2>
+  <p>WolfCart provides per-product SEO fields that you can use in your custom storefront to improve search engine visibility. Each product can have its own meta title, meta description, Open Graph tags, and structured data. If a product has no SEO fields set, fall back to the product name and description.</p>
+  
+  <p>SEO fields come from two sources:</p>
+  <ol style="color:var(--dim);font-size:14px;font-weight:300;padding-left:20px;margin-bottom:16px;line-height:2">
+    <li>Product-level: set per product in the merchant dashboard (Growth/Pro plans)</li>
+    <li>Store-level: fallback values from <code style="font-family:'JetBrains Mono',monospace">GET /store</code> → <code style="font-family:'JetBrains Mono',monospace">data.seo</code></li>
+  </ol>
+
+  <div class="info tip">
+    SEO fields are available on Growth and Pro plans. Starter plan products return null for all SEO fields — apply your own fallback logic using product name and description.
+  </div>
+
+  <h4>Fallback priority table</h4>
+  <table class="params-table">
+    <thead><tr><th>Field</th><th>First choice</th><th>Fallback</th></tr></thead>
+    <tbody>
+      <tr><td class="p-name">Title tag</td><td class="p-desc">product.metaTitle</td><td class="p-desc">product.name + store name</td></tr>
+      <tr><td class="p-name">Description</td><td class="p-desc">product.metaDescription</td><td class="p-desc">product.description.slice(0,155)</td></tr>
+      <tr><td class="p-name">OG title</td><td class="p-desc">product.ogTitle</td><td class="p-desc">product.metaTitle or product.name</td></tr>
+      <tr><td class="p-name">OG description</td><td class="p-desc">product.ogDescription</td><td class="p-desc">product.metaDescription</td></tr>
+      <tr><td class="p-name">OG image</td><td class="p-desc">product.ogImageUrl</td><td class="p-desc">product.images[0].url</td></tr>
+      <tr><td class="p-name">Canonical URL</td><td class="p-desc">product.canonicalUrl</td><td class="p-desc">constructed from slug</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="seo-product-fields">Product SEO Fields</h3>
+  <p>All SEO fields returned on product objects:</p>
+  <table class="params-table">
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="p-name">metaTitle</td><td><span class="p-type">string | null</span></td><td class="p-desc">Page title for search engines (50-60 chars)</td></tr>
+      <tr><td class="p-name">metaDescription</td><td><span class="p-type">string | null</span></td><td class="p-desc">Page description for search (140-160 chars)</td></tr>
+      <tr><td class="p-name">metaKeywords</td><td><span class="p-type">string | null</span></td><td class="p-desc">Comma-separated keywords</td></tr>
+      <tr><td class="p-name">ogTitle</td><td><span class="p-type">string | null</span></td><td class="p-desc">Open Graph title for social sharing</td></tr>
+      <tr><td class="p-name">ogDescription</td><td><span class="p-type">string | null</span></td><td class="p-desc">Open Graph description for social sharing</td></tr>
+      <tr><td class="p-name">ogImageUrl</td><td><span class="p-type">string | null</span></td><td class="p-desc">Open Graph image URL (recommended: 1200×630)</td></tr>
+      <tr><td class="p-name">canonicalUrl</td><td><span class="p-type">string | null</span></td><td class="p-desc">Canonical URL (null = use current page URL)</td></tr>
+      <tr><td class="p-name">noIndex</td><td><span class="p-type">boolean</span></td><td class="p-desc">If true: add noindex meta tag</td></tr>
+    </tbody>
+  </table>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-lang">Reading SEO fields — JavaScript</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+    <pre><span class="cm">// Fetch product</span>
+<span class="kw">const</span> { data: product } = <span class="kw">await</span> wolfcartFetch(<span class="str">'/products/gold-chain-necklace'</span>)
+
+<span class="kw">const</span> STORE_NAME = <span class="str">'KPop Shop'</span>
+<span class="kw">const</span> STORE_URL = <span class="str">'https://kpopshop.wolfcart.shop'</span>
+
+<span class="cm">// Build SEO values with fallbacks</span>
+<span class="kw">const</span> seo = {
+  title: product.metaTitle
+    ?? <span class="str">`${product.name} — ${STORE_NAME}`</span>,
+
+  description: product.metaDescription
+    ?? product.description?.slice(<span class="num">0</span>, <span class="num">155</span>)
+    ?? <span class="str">''</span>,
+
+  ogTitle: product.ogTitle
+    ?? product.metaTitle
+    ?? product.name,
+
+  ogDescription: product.ogDescription
+    ?? product.metaDescription
+    ?? product.description?.slice(<span class="num">0</span>, <span class="num">100</span>)
+    ?? <span class="str">''</span>,
+
+  ogImage: product.ogImageUrl
+    ?? product.images?.[<span class="num">0</span>]?.url
+    ?? <span class="kw">null</span>,
+
+  canonical: product.canonicalUrl
+    ?? <span class="str">`${STORE_URL}/products/${product.slug}`</span>,
+
+  noIndex: product.noIndex ?? <span class="kw">false</span>,
+}</pre>
+  </div>
+
+  <h3 id="seo-meta-tags">Applying Meta Tags</h3>
+  <p>How to apply WolfCart SEO fields as HTML meta tags in your storefront.</p>
+
+  <h4>Next.js App Router (generateMetadata)</h4>
+  <p>Use this if your storefront uses Next.js with server rendering:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-lang">app/products/[slug]/page.tsx</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+    <pre><span class="kw">import type</span> { Metadata } <span class="kw">from</span> <span class="str">'next'</span>
+
+<span class="kw">export async function</span> generateMetadata({ params }: { params: { slug: <span class="kw">string</span> } }): Promise&lt;Metadata&gt; {
+  <span class="kw">const</span> { data: product } = <span class="kw">await</span> wolfcartFetch(<span class="str">`/products/${params.slug}`</span>)
+
+  <span class="kw">const</span> STORE_NAME = process.env.NEXT_PUBLIC_BRAND_NAME ?? <span class="str">'My Store'</span>
+  <span class="kw">const</span> STORE_URL = <span class="str">`https://${process.env.NEXT_PUBLIC_TENANT_SLUG}.wolfcart.shop`</span>
+
+  <span class="kw">return</span> {
+    title: product.metaTitle ?? <span class="str">`${product.name} — ${STORE_NAME}`</span>,
+    description: product.metaDescription ?? product.description?.slice(<span class="num">0</span>, <span class="num">155</span>),
+    keywords: product.metaKeywords ?? <span class="kw">undefined</span>,
+    robots: product.noIndex ? <span class="str">'noindex, nofollow'</span> : <span class="str">'index, follow'</span>,
+    alternates: {
+      canonical: product.canonicalUrl ?? <span class="str">`${STORE_URL}/products/${product.slug}`</span>,
+    },
+    openGraph: {
+      type: <span class="str">'website'</span>,
+      title: product.ogTitle ?? product.metaTitle ?? product.name,
+      description: product.ogDescription ?? product.metaDescription ?? <span class="str">''</span>,
+      images: product.ogImageUrl
+        ? [{ url: product.ogImageUrl, width: <span class="num">1200</span>, height: <span class="num">630</span> }]
+        : product.images?.[<span class="num">0</span>]?.url
+        ? [{ url: product.images[<span class="num">0</span>].url }]
+        : [],
+      url: <span class="str">`${STORE_URL}/products/${product.slug}`</span>,
+    },
+    twitter: {
+      card: <span class="str">'summary_large_image'</span>,
+      title: product.ogTitle ?? product.name,
+      description: product.ogDescription ?? product.metaDescription ?? <span class="str">''</span>,
+      images: product.ogImageUrl ?? product.images?.[<span class="num">0</span>]?.url ?? <span class="kw">undefined</span>,
+    },
+  }
+}</pre>
+  </div>
+
+  <h4>Next.js Static Export (useEffect approach)</h4>
+  <p>Use this if your storefront is a static export (BUILD_MODE=static):</p>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-lang">components/SeoHead.tsx</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+    <pre><span class="str">'use client'</span>
+<span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">export function</span> SeoHead({ title, description, ogImage, ogTitle, ogDescription,
+                          canonical, noIndex, keywords }) {
+  useEffect(() => {
+    document.title = title
+
+    <span class="kw">function</span> setMeta(name, content, attr = <span class="str">'name'</span>) {
+      <span class="kw">let</span> el = document.querySelector(<span class="str">`meta[${attr}="${name}"]`</span>)
+      <span class="kw">if</span> (!el) {
+        el = document.createElement(<span class="str">'meta'</span>)
+        el.setAttribute(attr, name)
+        document.head.appendChild(el)
+      }
+      el.setAttribute(<span class="str">'content'</span>, content)
+    }
+
+    <span class="kw">function</span> setLink(rel, href) {
+      <span class="kw">let</span> el = document.querySelector(<span class="str">`link[rel="${rel}"]`</span>)
+      <span class="kw">if</span> (!el) {
+        el = document.createElement(<span class="str">'link'</span>)
+        el.rel = rel
+        document.head.appendChild(el)
+      }
+      el.href = href
+    }
+
+    setMeta(<span class="str">'description'</span>, description)
+    setMeta(<span class="str">'robots'</span>, noIndex ? <span class="str">'noindex,nofollow'</span> : <span class="str">'index,follow'</span>)
+    <span class="kw">if</span> (keywords) setMeta(<span class="str">'keywords'</span>, keywords)
+
+    setMeta(<span class="str">'og:title'</span>, ogTitle ?? title, <span class="str">'property'</span>)
+    setMeta(<span class="str">'og:description'</span>, ogDescription ?? description, <span class="str">'property'</span>)
+    setMeta(<span class="str">'og:type'</span>, <span class="str">'product'</span>, <span class="str">'property'</span>)
+    <span class="kw">if</span> (ogImage) setMeta(<span class="str">'og:image'</span>, ogImage, <span class="str">'property'</span>)
+
+    setMeta(<span class="str">'twitter:card'</span>, <span class="str">'summary_large_image'</span>)
+    setMeta(<span class="str">'twitter:title'</span>, ogTitle ?? title)
+    setMeta(<span class="str">'twitter:description'</span>, ogDescription ?? description)
+    <span class="kw">if</span> (ogImage) setMeta(<span class="str">'twitter:image'</span>, ogImage)
+
+    <span class="kw">if</span> (canonical) setLink(<span class="str">'canonical'</span>, canonical)
+  }, [title, description, ogImage, ogTitle, ogDescription, canonical, noIndex])
+
+  <span class="kw">return null</span>
+}</pre>
+  </div>
+
+  <h4>Plain HTML / Vanilla JS</h4>
+  <p>For non-framework storefronts:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-lang">JavaScript</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+    <pre><span class="kw">async function</span> applyProductSeo(slug) {
+  <span class="kw">const</span> { data: product } = <span class="kw">await</span> wolfcartFetch(<span class="str">`/products/${slug}`</span>)
+  <span class="kw">const</span> STORE = <span class="str">'KPop Shop'</span>
+  <span class="kw">const</span> BASE = <span class="str">'https://kpopshop.wolfcart.shop'</span>
+
+  document.title = product.metaTitle ?? <span class="str">`${product.name} — ${STORE}`</span>
+
+  <span class="kw">const</span> setMeta = (sel, content) => {
+    <span class="kw">const</span> el = document.querySelector(sel)
+      ?? document.head.appendChild(document.createElement(<span class="str">'meta'</span>))
+    <span class="kw">const</span> attr = sel.includes(<span class="str">'property'</span>) ? <span class="str">'property'</span> : <span class="str">'name'</span>
+    <span class="kw">const</span> val = sel.match(<span class="str">/["']([^"']+)["']/</span>)?.[<span class="num">1</span>] ?? <span class="str">''</span>
+    el.setAttribute(attr, val)
+    el.setAttribute(<span class="str">'content'</span>, content)
+  }
+
+  setMeta(<span class="str">'meta[name="description"]'</span>,
+    product.metaDescription ?? product.description?.slice(<span class="num">0</span>,<span class="num">155</span>) ?? <span class="str">''</span>)
+  setMeta(<span class="str">'meta[name="robots"]'</span>,
+    product.noIndex ? <span class="str">'noindex,nofollow'</span> : <span class="str">'index,follow'</span>)
+  setMeta(<span class="str">'meta[property="og:title"]'</span>,
+    product.ogTitle ?? product.metaTitle ?? product.name)
+  setMeta(<span class="str">'meta[property="og:description"]'</span>,
+    product.ogDescription ?? product.metaDescription ?? <span class="str">''</span>)
+  setMeta(<span class="str">'meta[property="og:type"]'</span>, <span class="str">'product'</span>)
+
+  <span class="kw">const</span> img = product.ogImageUrl ?? product.images?.[<span class="num">0</span>]?.url
+  <span class="kw">if</span> (img) setMeta(<span class="str">'meta[property="og:image"]'</span>, img)
+
+  <span class="kw">let</span> canonical = document.querySelector(<span class="str">'link[rel="canonical"]'</span>)
+  <span class="kw">if</span> (!canonical) {
+    canonical = document.createElement(<span class="str">'link'</span>)
+    canonical.rel = <span class="str">'canonical'</span>
+    document.head.appendChild(canonical)
+  }
+  canonical.href = product.canonicalUrl ?? <span class="str">`${BASE}/products/${product.slug}`</span>
+}</pre>
+  </div>
+
+  <h3 id="seo-structured-data">Structured Data — JSON-LD</h3>
+  <p>Google uses JSON-LD structured data to show rich results for products — including price, availability, and ratings in search results. Add this to every product page. It is separate from meta tags.</p>
+  <p>WolfCart products contain all the data needed to generate Product schema.</p>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-lang">Generating Product JSON-LD — JavaScript</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+    <pre><span class="kw">function</span> buildProductSchema(product, storeUrl, storeName) {
+  <span class="kw">const</span> prices = product.variants?.map(v => v.price) ?? [product.price]
+  <span class="kw">const</span> inStock = product.variants?.some(v => v.inventory > <span class="num">0</span>)
+    ?? product.inStock
+
+  <span class="kw">return</span> {
+    <span class="str">'@context'</span>: <span class="str">'https://schema.org'</span>,
+    <span class="str">'@type'</span>: <span class="str">'Product'</span>,
+    name: product.name,
+    description: product.metaDescription ?? product.description,
+    image: product.images?.map(img => img.url) ?? [],
+    url: <span class="str">`${storeUrl}/products/${product.slug}`</span>,
+    sku: product.variants?.[<span class="num">0</span>]?.sku ?? <span class="kw">undefined</span>,
+    brand: {
+      <span class="str">'@type'</span>: <span class="str">'Brand'</span>,
+      name: storeName,
+    },
+    offers: {
+      <span class="str">'@type'</span>: <span class="str">'AggregateOffer'</span>,
+      priceCurrency: <span class="str">'LKR'</span>,
+      lowPrice: (Math.min(...prices) / <span class="num">100</span>).toFixed(<span class="num">2</span>),
+      highPrice: (Math.max(...prices) / <span class="num">100</span>).toFixed(<span class="num">2</span>),
+      offerCount: product.variants?.length ?? <span class="num">1</span>,
+      availability: inStock
+        ? <span class="str">'https://schema.org/InStock'</span>
+        : <span class="str">'https://schema.org/OutOfStock'</span>,
+      offers: (product.variants ?? []).map(v => ({
+        <span class="str">'@type'</span>: <span class="str">'Offer'</span>,
+        price: (v.price / <span class="num">100</span>).toFixed(<span class="num">2</span>),
+        priceCurrency: <span class="str">'LKR'</span>,
+        availability: v.inventory > <span class="num">0</span>
+          ? <span class="str">'https://schema.org/InStock'</span>
+          : <span class="str">'https://schema.org/OutOfStock'</span>,
+        sku: v.sku ?? <span class="kw">undefined</span>,
+        seller: { <span class="str">'@type'</span>: <span class="str">'Organization'</span>, name: storeName },
+      })),
+    },
+  }
+}
+
+<span class="cm">// Inject into page:</span>
+<span class="kw">function</span> injectJsonLd(schema) {
+  <span class="kw">const</span> existing = document.getElementById(<span class="str">'product-schema'</span>)
+  <span class="kw">const</span> el = existing ?? document.createElement(<span class="str">'script'</span>)
+  el.id = <span class="str">'product-schema'</span>
+  el.type = <span class="str">'application/ld+json'</span>
+  el.textContent = JSON.stringify(schema)
+  <span class="kw">if</span> (!existing) document.head.appendChild(el)
+}
+
+<span class="cm">// Usage:</span>
+<span class="kw">const</span> schema = buildProductSchema(product, STORE_URL, STORE_NAME)
+injectJsonLd(schema)</pre>
+  </div>
+
+  <div class="info note">
+    Test your structured data at: <br>
+    <a href="https://search.google.com/test/rich-results" style="color:inherit">https://search.google.com/test/rich-results</a> <br>
+    Paste your product page URL or code snippet to verify Google can read your Product schema.
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-lang">Homepage JSON-LD (add to your homepage only)</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+    <pre><span class="kw">const</span> websiteSchema = {
+  <span class="str">'@context'</span>: <span class="str">'https://schema.org'</span>,
+  <span class="str">'@type'</span>: <span class="str">'WebSite'</span>,
+  name: storeName,
+  url: storeUrl,
+  potentialAction: {
+    <span class="str">'@type'</span>: <span class="str">'SearchAction'</span>,
+    target: <span class="str">`${storeUrl}/products?q={search_term_string}`</span>,
+    <span class="str">'query-input'</span>: <span class="str">'required name=search_term_string'</span>,
+  },
+}</pre>
+  </div>
+
+  <h3 id="seo-og-tags">Open Graph Tags</h3>
+  <p>Open Graph tags control how your products appear when shared on Facebook, WhatsApp, Twitter/X, and LinkedIn. WolfCart provides og:title, og:description, and og:image per product.</p>
+
+  <h4>OG image requirements</h4>
+  <table class="params-table">
+    <thead><tr><th>Requirement</th><th>Specification</th></tr></thead>
+    <tbody>
+      <tr><td class="p-name">Recommended size</td><td class="p-desc">1200 × 630 pixels</td></tr>
+      <tr><td class="p-name">Minimum size</td><td class="p-desc">600 × 315 pixels</td></tr>
+      <tr><td class="p-name">Aspect ratio</td><td class="p-desc">1.91:1</td></tr>
+      <tr><td class="p-name">Max file size</td><td class="p-desc">8MB</td></tr>
+      <tr><td class="p-name">Supported formats</td><td class="p-desc">JPG, PNG, WebP</td></tr>
+    </tbody>
+  </table>
+  <div class="info tip">
+    If <code style="font-family:'JetBrains Mono',monospace">ogImageUrl</code> is null, use the first product image. Product images are already hosted on Cloudflare R2 — no extra work needed.
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-lang">HTML — Product Page OG Tags</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+    <pre><span class="cm">&lt;!-- Required --&gt;</span>
+&lt;meta property=<span class="str">"og:type"</span>        content=<span class="str">"product"</span> /&gt;
+&lt;meta property=<span class="str">"og:title"</span>       content=<span class="str">"{ogTitle}"</span> /&gt;
+&lt;meta property=<span class="str">"og:description"</span> content=<span class="str">"{ogDescription}"</span> /&gt;
+&lt;meta property=<span class="str">"og:url"</span>         content=<span class="str">"{storeUrl}/products/{slug}"</span> /&gt;
+&lt;meta property=<span class="str">"og:image"</span>       content=<span class="str">"{ogImageUrl or images[0].url}"</span> /&gt;
+
+<span class="cm">&lt;!-- Recommended --&gt;</span>
+&lt;meta property=<span class="str">"og:image:width"</span>  content=<span class="str">"1200"</span> /&gt;
+&lt;meta property=<span class="str">"og:image:height"</span> content=<span class="str">"630"</span> /&gt;
+&lt;meta property=<span class="str">"og:site_name"</span>    content=<span class="str">"{storeName}"</span> /&gt;
+&lt;meta property=<span class="str">"og:locale"</span>       content=<span class="str">"en_LK"</span> /&gt;
+
+<span class="cm">&lt;!-- Product-specific OG tags (optional but helpful) --&gt;</span>
+&lt;meta property=<span class="str">"product:price:amount"</span>   content=<span class="str">"{price / 100}"</span> /&gt;
+&lt;meta property=<span class="str">"product:price:currency"</span> content=<span class="str">"LKR"</span> /&gt;
+&lt;meta property=<span class="str">"product:availability"</span>   content=<span class="str">"in stock"</span> /&gt;
+
+<span class="cm">&lt;!-- Twitter Card --&gt;</span>
+&lt;meta name=<span class="str">"twitter:card"</span>        content=<span class="str">"summary_large_image"</span> /&gt;
+&lt;meta name=<span class="str">"twitter:title"</span>       content=<span class="str">"{ogTitle}"</span> /&gt;
+&lt;meta name=<span class="str">"twitter:description"</span> content=<span class="str">"{ogDescription}"</span> /&gt;
+&lt;meta name=<span class="str">"twitter:image"</span>       content=<span class="str">"{ogImage}"</span> /&gt;</pre>
+  </div>
+
+  <div class="info tip">
+    Test how your product looks when shared: <br>
+    Facebook: <a href="https://developers.facebook.com/tools/debug/" style="color:inherit">https://developers.facebook.com/tools/debug/</a> <br>
+    Twitter: <a href="https://cards-dev.twitter.com/validator" style="color:inherit">https://cards-dev.twitter.com/validator</a> <br>
+    LinkedIn: <a href="https://www.linkedin.com/post-inspector/" style="color:inherit">https://www.linkedin.com/post-inspector/</a>
+  </div>
+
+  <h3 id="seo-sitemap">Sitemap</h3>
+  <p>A sitemap.xml helps Google discover and index all your product pages. Generate one at build time using the WolfCart API to fetch all active products and collections.</p>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-lang">scripts/generate-sitemap.mjs</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+    <pre><span class="cm">// Run after: pnpm build:storefront {slug}</span>
+
+<span class="kw">const</span> API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL
+<span class="kw">const</span> API_KEY  = process.env.NEXT_PUBLIC_STOREFRONT_API_KEY
+<span class="kw">const</span> SLUG     = process.env.NEXT_PUBLIC_TENANT_SLUG
+<span class="kw">const</span> BASE_URL = <span class="str">`https://${SLUG}.wolfcart.shop`</span>
+
+<span class="kw">async function</span> fetchAll(path) {
+  <span class="kw">const</span> res = <span class="kw">await</span> fetch(<span class="str">`${API_BASE}/storefront/v1${path}`</span>, {
+    headers: { <span class="str">'Authorization'</span>: <span class="str">`Bearer ${API_KEY}`</span>, <span class="str">'x-tenant-slug'</span>: SLUG },
+  })
+  <span class="kw">const</span> { data } = <span class="kw">await</span> res.json()
+  <span class="kw">return</span> data
+}
+
+<span class="kw">const</span> [products, collections] = <span class="kw">await</span> Promise.all([
+  fetchAll(<span class="str">'/products?limit=100&sort=newest'</span>),
+  fetchAll(<span class="str">'/collections'</span>),
+])
+
+<span class="kw">const</span> urls = [
+  { loc: BASE_URL, priority: <span class="str">'1.0'</span>, changefreq: <span class="str">'daily'</span> },
+  { loc: <span class="str">`${BASE_URL}/products`</span>, priority: <span class="str">'0.9'</span>, changefreq: <span class="str">'daily'</span> },
+  { loc: <span class="str">`${BASE_URL}/collections`</span>, priority: <span class="str">'0.8'</span>, changefreq: <span class="str">'weekly'</span> },
+  ...products.map(p => ({
+    loc: <span class="str">`${BASE_URL}/products/${p.slug}`</span>,
+    priority: <span class="str">'0.8'</span>,
+    changefreq: <span class="str">'weekly'</span>,
+  })),
+  ...collections.map(c => ({
+    loc: <span class="str">`${BASE_URL}/collections/${c.slug}`</span>,
+    priority: <span class="str">'0.7'</span>,
+    changefreq: <span class="str">'weekly'</span>,
+  })),
+]
+
+<span class="kw">const</span> xml = <span class="str">`&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+${urls.map(u => `  &lt;url&gt;
+    &lt;loc&gt;${u.loc}&lt;/loc&gt;
+    &lt;changefreq&gt;${u.changefreq}&lt;/changefreq&gt;
+    &lt;priority&gt;${u.priority}&lt;/priority&gt;
+  &lt;/url&gt;`).join('\n')}
+&lt;/urlset&gt;`</span>
+
+<span class="kw">import</span> { writeFileSync } <span class="kw">from</span> <span class="str">'fs'</span>
+writeFileSync(<span class="str">'out/sitemap.xml'</span>, xml)
+console.log(<span class="str">`Sitemap: ${urls.length} URLs written to out/sitemap.xml`</span>)</pre>
+  </div>
+
+  <div class="info tip">
+    After deploying, submit your sitemap to Google Search Console: <br>
+    1. Go to <a href="https://search.google.com/search-console" style="color:inherit">search.google.com/search-console</a> <br>
+    2. Add your store domain <br>
+    3. Sitemaps → Add sitemap → enter 'sitemap.xml' <br>
+    Google will crawl your products within 1-7 days.
+  </div>
+
+  <h3 id="seo-checklist">SEO Checklist</h3>
+  <p>Use this checklist when building a custom storefront to make sure all SEO requirements are met before going live.</p>
+
+  <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0">
+    <div style="margin-bottom:24px">
+      <h4 style="margin-top:0">GROUP 1 — Meta Tags (every page)</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] &lt;title&gt; tag set on every page (product name + store name)</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] &lt;meta name="description"&gt; set (140-160 characters)</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] &lt;meta name="robots"&gt; set (index,follow for live products)</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] &lt;link rel="canonical"&gt; points to correct URL</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] No duplicate title tags across pages</li>
+      </ul>
+    </div>
+    <div style="margin-bottom:24px">
+      <h4 style="margin-top:0">GROUP 2 — Open Graph (social sharing)</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] og:title set on every product page</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] og:description set</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] og:image set — minimum 600×315px, ideally 1200×630px</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] og:type = "product" on product pages</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] og:url matches canonical URL</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] twitter:card set to summary_large_image</li>
+      </ul>
+    </div>
+    <div style="margin-bottom:24px">
+      <h4 style="margin-top:0">GROUP 3 — Structured Data</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] Product JSON-LD on every product page</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] Product schema includes: name, description, image, offers</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] Offers include: price, priceCurrency, availability</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] WebSite JSON-LD on homepage</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] Validated with Google Rich Results Test</li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="margin-top:0">GROUP 4 — Technical</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] sitemap.xml generated and submitted to Google Search Console</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] All product images served from CDN (Cloudflare R2)</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] Page load time &lt; 3 seconds (use Lighthouse)</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] Mobile-friendly (use Google Mobile-Friendly Test)</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] HTTPS enabled (Cloudflare handles this automatically)</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--dim)">[ ] No broken links on product pages</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info tip" style="background:var(--bd);border-color:var(--blue);color:#93C5FD">
+    Quick test commands: <br>
+    Rich results: <a href="https://search.google.com/test/rich-results" style="color:inherit">https://search.google.com/test/rich-results</a> <br>
+    OG tags: <a href="https://developers.facebook.com/tools/debug/" style="color:inherit">https://developers.facebook.com/tools/debug/</a> <br>
+    Page speed: <a href="https://pagespeed.web.dev/" style="color:inherit">https://pagespeed.web.dev/</a> <br>
+    Mobile: <a href="https://search.google.com/test/mobile-friendly" style="color:inherit">https://search.google.com/test/mobile-friendly</a>
+  </div>
+
+</main>
+ 
+<script>
+function cp(btn) {
+  var block = btn.closest('.code-wrap');
+  var pre = block ? block.querySelector('pre') : null;
+  if (!pre) return;
+  var d = document.createElement('div');
+  d.innerHTML = pre.innerHTML;
+  var text = (d.textContent || d.innerText || '').trim();
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('ok');
+    setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+ 
+// Active sidebar link on scroll
+var links = document.querySelectorAll('.sb-link[href^="#"]');
+var sections = [];
+links.forEach(function(l) {
+  var id = l.getAttribute('href').slice(1);
+  var el = document.getElementById(id);
+  if (el) sections.push({ el: el, link: l });
+});
+window.addEventListener('scroll', function() {
+  var pos = window.scrollY + 80;
+  sections.forEach(function(s) {
+    s.link.classList.remove('active');
+  });
+  for (var i = sections.length - 1; i >= 0; i--) {
+    if (sections[i].el.offsetTop <= pos) {
+      sections[i].link.classList.add('active');
+      break;
+    }
+  }
+});
+</script>
+ 
+</body>
+</html>
