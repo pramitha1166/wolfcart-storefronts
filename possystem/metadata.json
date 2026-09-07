@@ -1,0 +1,6 @@
+{
+  "name": "POS Systems Storefront",
+  "description": "Custom WolfCart storefront for possystem.wolfcart.shop — an e-commerce store selling point-of-sale terminals, barcode scanners, receipt printers, cash drawers, card readers, and POS software.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

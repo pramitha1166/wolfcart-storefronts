@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /order-success
+Disallow: /privacy-policy
+Disallow: /terms-conditions
+
+Sitemap: /sitemap.xml

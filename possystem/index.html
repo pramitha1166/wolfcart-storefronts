@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Base title/meta — overridden at runtime by useSeo hook and by the CF Pages middleware for bots -->
+    <title>POS Systems — Point of Sale Equipment & Software</title>
+    <meta name="description" content="POS terminals, barcode scanners, receipt printers, cash drawers, card readers and POS software — in stock with island-wide delivery and setup support." />
+
+    <!-- Open Graph defaults (replaced dynamically per page) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="POS Systems — Point of Sale Equipment & Software" />
+    <meta property="og:description" content="POS terminals, barcode scanners, receipt printers, cash drawers, card readers and POS software — in stock with island-wide delivery and setup support." />
+
+    <!-- Twitter card defaults -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="POS Systems — Point of Sale Equipment & Software" />
+    <meta name="twitter:description" content="POS terminals, barcode scanners, receipt printers, cash drawers, card readers and POS software — in stock with island-wide delivery and setup support." />
+
+    <!-- Robots: allow indexing by default (overridden per-product via noIndex flag) -->
+    <meta name="robots" content="index, follow" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Injected per-merchant at deploy time; falls back to build-time env vars -->
+    <script src="/config.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
